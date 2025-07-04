@@ -1,0 +1,1 @@
+Una ecuación que contiene las derivadas de una o más funciones desconocidas (o variables dependientes) respecto a una o más variables independientes, se llama **Ecuación Diferencial (ED)**.
