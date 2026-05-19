@@ -1,0 +1,700 @@
+\documentclass[12pt, a4paper]{article}
+
+% ─── Paquetes ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[american]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+
+
+\tcbuselibrary{theorems, skins, breakable}
+
+% ─── Geometría ───────────────────────────────────────────────────────────────
+\geometry{
+  a4paper,
+  top=2.5cm,
+  bottom=2.5cm,
+  left=3cm,
+  right=3cm
+}
+
+% ─── Colores institucionales ─────────────────────────────────────────────────
+\definecolor{azulprimario}{RGB}{0, 71, 133}
+\definecolor{azulclaro}{RGB}{210, 228, 245}
+\definecolor{grisclaro}{RGB}{245, 245, 245}
+\definecolor{verdedestacado}{RGB}{0, 120, 80}
+\definecolor{rojoalerta}{RGB}{180, 30, 30}
+
+% ─── Estilo de página ────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{azulprimario}\textit{Taller 02 — Difusión de Calor en un Disco}}
+\fancyhead[R]{\small\color{azulprimario}\textit{Ecuaciones Diferenciales Parciales}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{azulprimario}\leaders\hrule height \headrulewidth\hfill}}
+
+% ─── Títulos de sección ──────────────────────────────────────────────────────
+\titleformat{\section}[block]
+  {\large\bfseries\color{azulprimario}}
+  {\thesection.}{0.5em}{}
+  [\vspace{0.5ex}\color{azulprimario}\hrule\vspace{0.5ex}]
+
+\titleformat{\subsection}[block]
+  {\normalsize\bfseries\color{azulprimario!80!black}}
+  {\thesubsection.}{0.5em}{}
+
+% ─── Cajas de entorno ────────────────────────────────────────────────────────
+\tcbset{
+  resultadoestilo/.style={
+    enhanced,
+    colback=azulclaro,
+    colframe=azulprimario,
+    fonttitle=\bfseries,
+    title={Resultado},
+    arc=3mm,
+    boxrule=0.8pt,
+    breakable
+  },
+  destacadoestilo/.style={
+    enhanced,
+    colback=grisclaro,
+    colframe=verdedestacado,
+    fonttitle=\bfseries\color{verdedestacado},
+    arc=2mm,
+    boxrule=0.6pt,
+    breakable
+  },
+  notaestilo/.style={
+    enhanced,
+    colback=yellow!10,
+    colframe=orange!70!black,
+    fonttitle=\bfseries\color{orange!70!black},
+    title={Nota},
+    arc=2mm,
+    boxrule=0.6pt,
+    breakable
+  }
+}
+
+\newenvironment{resultado}[1][]{%
+  \begin{tcolorbox}[resultadoestilo, title={#1}]%
+}{%
+  \end{tcolorbox}%
+}
+
+\newenvironment{destacado}{%
+  \begin{tcolorbox}[destacadoestilo]%
+}{%
+  \end{tcolorbox}%
+}
+
+\newenvironment{nota}{%
+  \begin{tcolorbox}[notaestilo]%
+}{%
+  \end{tcolorbox}%
+}
+
+% ─── Operadores ──────────────────────────────────────────────────────────────
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\pd}[2]{\dfrac{\partial #1}{\partial #2}}
+\newcommand{\pdd}[2]{\dfrac{\partial^2 #1}{\partial #2^2}}
+
+% ─── Hyperref ────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=azulprimario,
+  urlcolor=azulprimario,
+  pdftitle={Taller 02 - Difusión de Calor en un Disco},
+  pdfauthor={Ecuaciones Diferenciales Parciales}
+}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ─── PORTADA ─────────────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{1cm}
+
+  {\color{azulprimario}\rule{\linewidth}{1.5pt}}\\[0.4cm]
+  {\color{azulprimario}\rule{\linewidth}{0.4pt}}\\[1.5cm]
+
+  {\huge\bfseries\color{azulprimario}
+    Taller 02\\[0.4cm]
+    \large Difusión de Calor en un Disco\\
+    con Frontera Oscilante
+  }\\[1.5cm]
+
+  {\color{azulprimario}\rule{0.6\linewidth}{0.4pt}}\\[1cm]
+
+  \begin{tcolorbox}[
+    enhanced,
+    colback=azulclaro,
+    colframe=azulprimario,
+    arc=4mm,
+    boxrule=1pt,
+    width=0.85\textwidth
+  ]
+  \centering
+  {\large\bfseries Enunciado del Problema}\\[0.5em]
+  {\normalsize
+  Determinar el perfil de temperatura $u(r,t)$ en una placa circular de radio $R$,
+  gobernado por la ecuación de calor en coordenadas polares con simetría radial,
+  sujeto a una frontera oscilante $u(R,t) = T_0\sin(\omega t)$
+  y temperatura inicial nula $u(r,0) = 0$.
+  }
+  \end{tcolorbox}
+
+  \vspace{1.5cm}
+
+  \begin{tabular}{rl}
+    \textbf{\color{azulprimario}Curso:}    & Ecuaciones Diferenciales Parciales \\[0.3em]
+    \textbf{\color{azulprimario}Taller:}   & 02 \\[0.3em]
+    \textbf{\color{azulprimario}Método:}   & Expansión en Autofunciones de Fourier-Bessel \\[0.3em]
+  \end{tabular}
+
+  \vfill
+
+  {\color{azulprimario}\rule{\linewidth}{0.4pt}}\\[0.4cm]
+  {\color{azulprimario}\rule{\linewidth}{1.5pt}}
+\end{titlepage}
+
+% ─── TABLA DE CONTENIDOS ─────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Formulación del Problema}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+Considérese una placa circular metálica delgada de radio $R$. El perfil de temperatura
+$u(r,t)$ en la placa, bajo la hipótesis de simetría radial (independencia del ángulo $\theta$),
+está gobernado por la \textbf{ecuación de calor en coordenadas polares}:
+
+\begin{equation}
+  \pd{u}{t} = \alpha^2 \left( \pdd{u}{r} + \frac{1}{r}\pd{u}{r} \right),
+  \qquad 0 \leq r < R,\quad t > 0
+  \label{eq:calor_original}
+\end{equation}
+
+donde $\alpha^2$ es la difusividad térmica del material. El problema queda completamente
+determinado por las siguientes condiciones:
+
+\begin{align}
+  \textbf{(CF)}\quad &u(R,t) = T_0 \sin(\omega t) \label{eq:CF}\\[4pt]
+  \textbf{(CI)}\quad &u(r,0) = 0 \label{eq:CI}
+\end{align}
+
+La condición de frontera \eqref{eq:CF} modela una \textit{fluctuación armónica} de temperatura
+en el borde exterior del disco, con amplitud $T_0$ y frecuencia angular $\omega$.
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Paso 1: Transformación de Variable}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Motivación}
+
+El principal obstáculo para aplicar el método de expansión en autofunciones es que la condición
+de frontera \eqref{eq:CF} es \textbf{no homogénea}. Los métodos espectrales requieren que en
+la frontera la solución sea nula. Se introduce por tanto una transformación que \emph{traslade}
+esta dificultad de la frontera hacia el interior de la ecuación.
+
+\subsection{Definición de la nueva variable}
+
+Se observa que la función $w(t) = T_0\sin(\omega t)$ satisface trivialmente la condición de
+frontera en $r = R$. Se define entonces la nueva variable:
+
+\begin{equation}
+  \boxed{v(r,t) \;=\; u(r,t) - T_0\sin(\omega t)}
+  \label{eq:transformacion}
+\end{equation}
+
+de donde se despeja:
+\begin{equation}
+  u(r,t) = v(r,t) + T_0\sin(\omega t)
+  \label{eq:u_en_v}
+\end{equation}
+
+\subsection{Condiciones para la nueva variable}
+
+\textbf{Condición de frontera:} evaluando \eqref{eq:transformacion} en $r = R$:
+\begin{equation}
+  v(R,t) = \underbrace{u(R,t)}_{T_0\sin(\omega t)} - T_0\sin(\omega t) = 0
+\end{equation}
+
+\textbf{Condición inicial:} evaluando \eqref{eq:transformacion} en $t = 0$:
+\begin{equation}
+  v(r,0) = \underbrace{u(r,0)}_{0} - T_0\sin(0) = 0
+\end{equation}
+
+\begin{resultado}[Nuevo problema — condiciones]
+\begin{align*}
+  v(R,t) &= 0 \qquad \text{(frontera homogénea)} \\
+  v(r,0) &= 0 \qquad \text{(condición inicial nula)}
+\end{align*}
+\end{resultado}
+
+\begin{nota}
+La transformación \eqref{eq:transformacion} no elimina la no-homogeneidad: la mueve desde la
+frontera hacia la EDP, donde aparecerá como un término fuente $G(t)$ (véase el Paso~2).
+Este intercambio es conveniente porque una EDP no homogénea con frontera homogénea
+admite solución en serie.
+\end{nota}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Paso 2: Nueva EDP para \texorpdfstring{$v(r,t)$}{v(r,t)}}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Cálculo de las derivadas de \texorpdfstring{$u$}{u}}
+
+Se sustituye \eqref{eq:u_en_v} en la EDP original \eqref{eq:calor_original}. Para ello
+se calcula cada derivada por separado.
+
+\medskip
+\noindent\textbf{Derivada temporal:}
+\begin{equation}
+  \pd{u}{t} = \pd{}{t}\bigl[v(r,t) + T_0\sin(\omega t)\bigr]
+            = \pd{v}{t} + T_0\,\omega\cos(\omega t)
+\end{equation}
+
+\noindent\textbf{Derivadas espaciales:} dado que $T_0\sin(\omega t)$ no depende de $r$,
+sus derivadas respecto a $r$ son nulas:
+\begin{align}
+  \pdd{u}{r} &= \pdd{v}{r} \\[4pt]
+  \frac{1}{r}\pd{u}{r} &= \frac{1}{r}\pd{v}{r}
+\end{align}
+
+Por tanto, el operador laplaciano en coordenadas polares satisface:
+\begin{equation}
+  \nabla^2 u \;=\; \pdd{u}{r} + \frac{1}{r}\pd{u}{r} \;=\; \nabla^2 v
+\end{equation}
+
+\subsection{Sustitución en la EDP original}
+
+Reemplazando en \eqref{eq:calor_original}:
+\begin{equation}
+  \pd{v}{t} + T_0\,\omega\cos(\omega t) = \alpha^2\,\nabla^2 v
+\end{equation}
+
+Despejando $\pd{v}{t}$:
+\begin{equation}
+  \pd{v}{t} = \alpha^2\,\nabla^2 v - T_0\,\omega\cos(\omega t)
+\end{equation}
+
+\subsection{Identificación del término fuente}
+
+Comparando con la forma canónica requerida $v_t = \alpha^2\nabla^2 v + G(t)$, se identifica:
+
+\begin{resultado}[Término fuente]
+\begin{equation}
+  G(t) = -T_0\,\omega\cos(\omega t)
+  \label{eq:Gt}
+\end{equation}
+\end{resultado}
+
+\subsection{Resumen del problema transformado}
+
+\begin{tcolorbox}[
+  enhanced,
+  colback=grisclaro,
+  colframe=azulprimario,
+  title={\textbf{Problema para $v(r,t)$}},
+  fonttitle=\bfseries,
+  arc=3mm, boxrule=0.8pt, breakable
+]
+\begin{align}
+  \pd{v}{t} &= \alpha^2\,\nabla^2 v - T_0\,\omega\cos(\omega t),
+  \quad 0 \leq r < R,\; t > 0 \label{eq:EDP_v}\\[4pt]
+  v(R,t) &= 0 \label{eq:CF_v}\\[4pt]
+  v(r,0) &= 0 \label{eq:CI_v}
+\end{align}
+\end{tcolorbox}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Paso 3: Expansión en Series de Fourier-Bessel}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Autofunciones del problema}
+
+El problema espacial asociado a \eqref{eq:EDP_v}--\eqref{eq:CF_v} posee la misma estructura
+que la ecuación de Bessel de orden cero. Las \textbf{autofunciones} que satisfacen la condición
+de nulidad en la frontera son:
+\begin{equation}
+  \phi_n(r) = J_0\!\left(\frac{\lambda_n\, r}{R}\right), \qquad n = 1, 2, 3, \ldots
+\end{equation}
+
+donde $\lambda_n$ es el $n$-ésimo cero positivo de la función de Bessel de primera especie y
+orden cero, definido por la condición:
+\begin{equation}
+  J_0(\lambda_n) = 0
+\end{equation}
+
+Los primeros valores son aproximadamente: $\lambda_1 \approx 2.4048$, $\lambda_2 \approx 5.5201$,
+$\lambda_3 \approx 8.6537$.
+
+\begin{nota}
+Esta construcción es completamente análoga al caso cartesiano: en un dominio $[0,L]$
+con frontera nula, las autofunciones son $\sin(n\pi r/L)$ y se anulan en $r = L$
+porque $n\pi$ son los ceros del seno. Aquí, $\lambda_n$ son los ceros de $J_0$
+y cumplen el mismo papel.
+\end{nota}
+
+\subsection{Propuesta de expansión}
+
+Se propone escribir $v(r,t)$ como combinación lineal infinita de las autofunciones:
+\begin{equation}
+  \boxed{v(r,t) = \sum_{n=1}^{\infty} T_n(t)\, J_0\!\left(\frac{\lambda_n\, r}{R}\right)}
+  \label{eq:expansion}
+\end{equation}
+
+donde:
+\begin{itemize}[leftmargin=2em]
+  \item $J_0\!\left(\tfrac{\lambda_n r}{R}\right)$ captura la \textbf{dependencia espacial} y está completamente determinada;
+  \item $T_n(t)$ son los \textbf{coeficientes temporales} desconocidos que deben determinarse.
+\end{itemize}
+
+\subsection{Propiedad clave del Laplaciano sobre las autofunciones}
+
+Cada autofunción $\phi_n$ satisface la ecuación de Bessel de orden cero, lo que implica:
+\begin{equation}
+  \nabla^2 J_0\!\left(\frac{\lambda_n\, r}{R}\right)
+  = -\left(\frac{\lambda_n}{R}\right)^2 J_0\!\left(\frac{\lambda_n\, r}{R}\right)
+  \label{eq:eigenvalor}
+\end{equation}
+
+Esto expresa que las autofunciones son \emph{eigenvalores} del operador laplaciano,
+con valor propio $-(\lambda_n/R)^2$.
+
+\subsection{Sustitución de la expansión en la EDP}
+
+\noindent\textbf{Lado izquierdo} de \eqref{eq:EDP_v}:
+\begin{equation}
+  \pd{v}{t} = \sum_{n=1}^{\infty} T_n'(t)\, J_0\!\left(\frac{\lambda_n\, r}{R}\right)
+\end{equation}
+
+\noindent\textbf{Lado derecho} de \eqref{eq:EDP_v}, usando \eqref{eq:eigenvalor}:
+\begin{equation}
+  \alpha^2\,\nabla^2 v + G(t)
+  = \sum_{n=1}^{\infty} T_n(t)\left[-\alpha^2\frac{\lambda_n^2}{R^2}\right]
+    J_0\!\left(\frac{\lambda_n\, r}{R}\right) + G(t)
+\end{equation}
+
+El término fuente $G(t)$ también se expande en la misma base:
+\begin{equation}
+  G(t) = \sum_{n=1}^{\infty} g_n(t)\, J_0\!\left(\frac{\lambda_n\, r}{R}\right)
+  \label{eq:expansion_G}
+\end{equation}
+
+donde $g_n(t)$ son los coeficientes de proyección de $G(t)$ sobre las autofunciones
+(se calcularán en el Paso~4).
+
+\subsection{Ecuación para cada coeficiente temporal}
+
+Igualando ambos lados y usando la \textbf{ortogonalidad} de las autofunciones
+(si dos series en la misma base son iguales, sus coeficientes son iguales término a término),
+se obtiene una EDO lineal de primer orden para cada $T_n(t)$:
+
+\begin{equation}
+  T_n'(t) + k_n\, T_n(t) = g_n(t), \qquad n = 1, 2, 3, \ldots
+  \label{eq:ODE_Tn}
+\end{equation}
+
+donde se define el parámetro:
+\begin{equation}
+  k_n = \alpha^2\left(\frac{\lambda_n}{R}\right)^2
+  \label{eq:kn}
+\end{equation}
+
+\begin{resultado}[Reducción a EDOs]
+La EDP bidimensional \eqref{eq:EDP_v} ha sido reducida a una familia de EDOs
+lineales de primer orden \eqref{eq:ODE_Tn}, una para cada modo $n$.
+La solución general de \eqref{eq:ODE_Tn} mediante factor integrante es:
+\begin{equation}
+  T_n(t) = e^{-k_n t}\int e^{k_n t}\, g_n(t)\, \dd t + C\,e^{-k_n t}
+  \label{eq:solucion_general_Tn}
+\end{equation}
+La constante $C$ se determina con la condición inicial $T_n(0) = 0$.
+\end{resultado}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Paso 4: Coeficientes, Solución de la EDO y Ensamblaje Final}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Parte A: Cálculo de \texorpdfstring{$g_n(t)$}{gn(t)} por ortogonalidad}
+
+Para determinar el coeficiente $g_n(t)$ de la expansión \eqref{eq:expansion_G},
+se multiplica ambos miembros de dicha expansión por $J_0\!\left(\tfrac{\lambda_m r}{R}\right) \cdot r$
+y se integra de $0$ a $R$:
+
+\begin{equation}
+  \int_0^R G(t)\, J_0\!\left(\frac{\lambda_m r}{R}\right) r\,\dd r
+  = \sum_{n=1}^{\infty} g_n(t) \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right)
+    J_0\!\left(\frac{\lambda_m r}{R}\right) r\,\dd r
+\end{equation}
+
+Aplicando la \textbf{relación de ortogonalidad} del apéndice:
+\begin{equation}
+  \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right)
+  J_0\!\left(\frac{\lambda_m r}{R}\right) r\,\dd r
+  =
+  \begin{cases}
+    0 & \text{si } n \neq m \\[4pt]
+    \dfrac{R^2}{2}\left[J_1(\lambda_n)\right]^2 & \text{si } n = m
+  \end{cases}
+\end{equation}
+
+la suma infinita colapsa al único término $n = m$:
+\begin{equation}
+  \int_0^R G(t)\, J_0\!\left(\frac{\lambda_n r}{R}\right) r\,\dd r
+  = g_n(t)\cdot \frac{R^2}{2}\left[J_1(\lambda_n)\right]^2
+\end{equation}
+
+Despejando:
+\begin{equation}
+  g_n(t) = \frac{2}{R^2\left[J_1(\lambda_n)\right]^2}
+  \int_0^R G(t)\, J_0\!\left(\frac{\lambda_n r}{R}\right) r\,\dd r
+  \label{eq:gn_formula}
+\end{equation}
+
+\medskip
+\noindent\textbf{Evaluación de la integral espacial.}
+Como $G(t) = -T_0\,\omega\cos(\omega t)$ no depende de $r$, sale de la integral:
+
+\begin{equation}
+  g_n(t) = \frac{2\,(-T_0\,\omega\cos(\omega t))}{R^2\left[J_1(\lambda_n)\right]^2}
+  \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right) r\,\dd r
+\end{equation}
+
+Usando la \textbf{identidad de integración} del apéndice:
+\begin{equation}
+  \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right) r\,\dd r = \frac{R^2}{\lambda_n}\,J_1(\lambda_n)
+\end{equation}
+
+se obtiene, cancelando $R^2$ y un factor $J_1(\lambda_n)$:
+
+\begin{resultado}[Coeficiente $g_n(t)$]
+\begin{equation}
+  g_n(t) = \frac{-2\,T_0\,\omega\cos(\omega t)}{\lambda_n\, J_1(\lambda_n)}
+  \label{eq:gn}
+\end{equation}
+\end{resultado}
+
+\subsection{Parte B: Resolución de la EDO para \texorpdfstring{$T_n(t)$}{Tn(t)}}
+
+Sustituyendo \eqref{eq:gn} en \eqref{eq:ODE_Tn}, la EDO para cada modo es:
+
+\begin{equation}
+  T_n'(t) + k_n\, T_n(t) = \frac{-2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)}\cos(\omega t)
+  \label{eq:ODE_Tn_explicita}
+\end{equation}
+
+con condición inicial $T_n(0) = 0$.
+
+\medskip
+\noindent\textbf{Solución por factor integrante.} El factor integrante es $\mu(t) = e^{k_n t}$.
+Multiplicando \eqref{eq:ODE_Tn_explicita} por $\mu(t)$:
+
+\begin{equation}
+  \frac{d}{dt}\!\left[e^{k_n t} T_n(t)\right]
+  = \frac{-2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)}\,e^{k_n t}\cos(\omega t)
+\end{equation}
+
+Integrando ambos lados:
+\begin{equation}
+  e^{k_n t} T_n(t)
+  = \frac{-2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)}
+    \int e^{k_n t}\cos(\omega t)\,\dd t + C
+\end{equation}
+
+\medskip
+\noindent\textbf{Integral clave.} Usando la fórmula estándar de integración por partes:
+\begin{equation}
+  \int e^{at}\cos(\omega t)\,\dd t
+  = \frac{e^{at}}{a^2 + \omega^2}\Bigl[a\cos(\omega t) + \omega\sin(\omega t)\Bigr]
+\end{equation}
+
+con $a = k_n$:
+
+\begin{equation}
+  \int e^{k_n t}\cos(\omega t)\,\dd t
+  = \frac{e^{k_n t}}{k_n^2 + \omega^2}
+    \Bigl[k_n\cos(\omega t) + \omega\sin(\omega t)\Bigr]
+\end{equation}
+
+Sustituyendo y dividiendo por $e^{k_n t}$:
+
+\begin{equation}
+  T_n(t) = \frac{-2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)(k_n^2 + \omega^2)}
+  \Bigl[k_n\cos(\omega t) + \omega\sin(\omega t)\Bigr]
+  + C\,e^{-k_n t}
+  \label{eq:Tn_general}
+\end{equation}
+
+\medskip
+\noindent\textbf{Determinación de la constante.} Aplicando $T_n(0) = 0$ en \eqref{eq:Tn_general}:
+
+\begin{equation}
+  0 = \frac{-2\,T_0\,\omega\,k_n}{\lambda_n\,J_1(\lambda_n)(k_n^2 + \omega^2)} + C
+  \quad\Rightarrow\quad
+  C = \frac{2\,T_0\,\omega\,k_n}{\lambda_n\,J_1(\lambda_n)(k_n^2 + \omega^2)}
+\end{equation}
+
+\medskip
+\noindent Sustituyendo $C$ en \eqref{eq:Tn_general} y factorizando:
+
+\begin{resultado}[Coeficiente temporal $T_n(t)$]
+\begin{equation}
+  T_n(t) = \frac{2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)(k_n^2 + \omega^2)}
+  \left[k_n\,e^{-k_n t} - k_n\cos(\omega t) - \omega\sin(\omega t)\right]
+  \label{eq:Tn_final}
+\end{equation}
+\end{resultado}
+
+\subsection{Parte C: Ensamblaje de la solución final}
+
+Recordando que $u(r,t) = v(r,t) + T_0\sin(\omega t)$ y $v = \sum_{n=1}^{\infty} T_n(t)\,\phi_n(r)$,
+la solución completa es:
+
+\begin{tcolorbox}[
+  enhanced,
+  colback=azulclaro!60,
+  colframe=azulprimario,
+  title={\large\bfseries Solución Completa},
+  fonttitle=\bfseries\color{white},
+  coltitle=white,
+  arc=4mm, boxrule=1pt, breakable
+]
+\begin{equation}
+  \boxed{
+  u(r,t) = T_0\sin(\omega t)
+  + \sum_{n=1}^{\infty}
+  \frac{2\,T_0\,\omega}{\lambda_n\,J_1(\lambda_n)(k_n^2 + \omega^2)}
+  \left[k_n\,e^{-k_n t} - k_n\cos(\omega t) - \omega\sin(\omega t)\right]
+  J_0\!\left(\frac{\lambda_n\, r}{R}\right)
+  }
+  \label{eq:solucion_final}
+\end{equation}
+
+con $k_n = \alpha^2\!\left(\dfrac{\lambda_n}{R}\right)^{\!2}$ y $\lambda_n$ el $n$-ésimo cero de $J_0$.
+\end{tcolorbox}
+
+\subsection{Interpretación física de los términos}
+
+La solución \eqref{eq:solucion_final} tiene una estructura tripartita con significado físico claro:
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{>{\bfseries\color{azulprimario}}p{3.5cm} p{4.5cm} p{5.5cm}}
+\toprule
+\color{azulprimario}Término & \color{azulprimario}Expresión & \color{azulprimario}Significado físico \\
+\midrule
+Frontera & $T_0\sin(\omega t)$ & Oscilación impuesta en el borde del disco \\
+Régimen permanente & $-[k_n\cos(\omega t) + \omega\sin(\omega t)]$ & Respuesta estacionaria del disco a la excitación armónica \\
+Transitorio & $k_n\,e^{-k_n t}$ & Efecto de la condición inicial; decae exponencialmente \\
+\bottomrule
+\end{tabular}
+\caption{Descomposición física de la solución.}
+\end{table}
+
+\begin{destacado}
+\textbf{Comportamiento asintótico.} A medida que $t \to \infty$, el término transitorio
+$e^{-k_n t} \to 0$ para todo $n \geq 1$ (pues $k_n > 0$). El disco \emph{olvida} su
+condición inicial y la temperatura converge a la respuesta permanente dictada por la
+oscilación de la frontera.
+\end{destacado}
+
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Resumen del Método}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+El problema fue resuelto mediante el siguiente esquema:
+
+\begin{center}
+\begin{tcolorbox}[
+  enhanced,
+  colback=grisclaro,
+  colframe=azulprimario,
+  arc=3mm, boxrule=0.6pt,
+  width=0.92\textwidth
+]
+\[
+  \underbrace{u\;\text{con CF no homogénea}}_{\text{Problema original}}
+  \xrightarrow{\;\text{Paso 1}\;}
+  \underbrace{v\;\text{con CF homogénea + }G(t)}_{\text{EDP no homogénea}}
+  \xrightarrow{\;\text{Paso 3}\;}
+  \underbrace{T_n'(t) + k_n T_n = g_n(t)}_{\text{Familia de EDOs}}
+  \xrightarrow{\;\text{Paso 4}\;}
+  u(r,t)
+\]
+\end{tcolorbox}
+\end{center}
+
+\begin{enumerate}[leftmargin=2.5em, label=\textbf{Paso \arabic*.}]
+  \item \textbf{Transformación:} $v = u - T_0\sin(\omega t)$ homogeneiza la frontera
+        e introduce un término fuente $G(t) = -T_0\omega\cos(\omega t)$ en la EDP.
+
+  \item \textbf{Nueva EDP:} La ecuación para $v$ es no homogénea:
+        $v_t = \alpha^2\nabla^2 v + G(t)$, con CF y CI nulas.
+
+  \item \textbf{Expansión de Fourier-Bessel:} $v = \sum_n T_n(t)\,J_0(\lambda_n r/R)$
+        transforma la EDP en una EDO lineal de primer orden para cada $T_n(t)$.
+
+  \item \textbf{Coeficientes y ensamblaje:} La ortogonalidad determina $g_n(t)$;
+        el factor integrante resuelve la EDO; la CI fija la constante de integración.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\appendix
+\section{Propiedades de las Funciones de Bessel Utilizadas}
+% ═══════════════════════════════════════════════════════════════════════════════
+
+\subsection{Autofunciones y valores propios}
+
+Las soluciones espaciales del problema que satisfacen la condición de nulidad en $r = R$ son:
+\[
+  \phi_n(r) = J_0\!\left(\frac{\lambda_n r}{R}\right), \quad J_0(\lambda_n) = 0
+\]
+
+\subsection{Relación de ortogonalidad}
+
+\begin{equation}
+  \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right) J_0\!\left(\frac{\lambda_m r}{R}\right) r\,\dd r
+  =
+  \begin{cases}
+    0 & n \neq m \\[4pt]
+    \dfrac{R^2}{2}\left[J_1(\lambda_n)\right]^2 & n = m
+  \end{cases}
+\end{equation}
+
+\subsection{Identidad de integración}
+
+\begin{equation}
+  \int x\,J_0(x)\,\dd x = x\,J_1(x) + C
+\end{equation}
+
+De la cual se deriva, mediante el cambio de variable $x = \lambda_n r/R$:
+
+\begin{equation}
+  \int_0^R J_0\!\left(\frac{\lambda_n r}{R}\right) r\,\dd r = \frac{R^2}{\lambda_n}\,J_1(\lambda_n)
+\end{equation}
+
+\end{document}
